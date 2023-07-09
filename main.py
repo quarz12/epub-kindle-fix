@@ -21,17 +21,16 @@ def update_file(file,z:ZipFile):
     return z.read(file)
 
 def main(zipname):
-    with ZipFile(zipname) as infile:
-        # generate a temp file
-        tmpfd, tmpname = tempfile.mkstemp(dir=os.path.dirname(zipname))
-        os.close(tmpfd)
+    # generate a temp file
+    tmpfd, tmpname = tempfile.mkstemp(dir=os.path.dirname(zipname))
+    os.close(tmpfd)
 
-        # create a temp copy of the archive without filename
-        with ZipFile(zipname, 'r') as zin:
-            with ZipFile(tmpname, 'w') as zout:
-                zout.comment = zin.comment  # preserve the comment
-                for item in zin.infolist():
-                    zout.writestr(item, update_file(item,zin))
+    # create a temp copy of the archive without filename
+    with ZipFile(zipname, 'r') as zin:
+        with ZipFile(tmpname, 'w') as zout:
+            zout.comment = zin.comment  # preserve the comment
+            for item in zin.infolist():
+                zout.writestr(item, update_file(item,zin))
 
     # replace with the temp archive
     os.remove(zipname)
